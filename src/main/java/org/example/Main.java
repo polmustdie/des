@@ -1,5 +1,9 @@
 package org.example;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class Main {
     // initial permuation table
      static int[] IP = { 58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36,
@@ -139,16 +143,51 @@ public class Main {
         byte tmpB = data[posByte];
          return tmpB >> (8 - (posBit + 1)) & 0x0001;
     }
+
+    public static byte[] vectorGeneration(){
+        byte[] buffer = new byte[8];
+        for (int i = 0; i < buffer.length; i++)
+            buffer[i] = (byte)(Math.random() * 256);
+        return buffer;
+    }
+
     public static void main(String[] args) {
         RoundKeys roundKeys = new RoundKeys();
         CryptTransformation cryptTransformation = new CryptTransformation();
         SymmetricalCrypt symmetricalCrypt = new SymmetricalCrypt(roundKeys, cryptTransformation);
+        byte[] array = new byte[1];
+        byte[] array2 = new byte[1];
+        try {
+            array = Files.readAllBytes(Paths.get("src/main/java/org/example/img.png"));
+            array2 = Files.readAllBytes(Paths.get("/Users/polinanesterova/Downloads/fruits.py"));
+        } catch (IOException e) {
+            System.out.println("File not found");
+        }
         String str = "I love cryptography";
-        String k = "5qw8sd4h";
-        byte[] encrypted = symmetricalCrypt.encrypt(str.getBytes(), k.getBytes());
+        byte[] k = vectorGeneration();
+        byte[] encrypted = symmetricalCrypt.encrypt(array, k);
         System.out.println(new String(encrypted));
-        byte[] decrypted = symmetricalCrypt.decrypt(encrypted, k.getBytes());
-        System.out.println(new String(decrypted));
+        byte[] decrypted = symmetricalCrypt.decrypt(encrypted, k);
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUT.png"))) {
+            out.write(decrypted);
+        } catch (FileNotFoundException e) {
+            System.out.println("Ex");
+        } catch (IOException e) {
+            System.out.println("Ex2");
+        }
+
+
+        byte[] encrypted2 = symmetricalCrypt.encrypt(array2, k);
+        System.out.println(new String(encrypted));
+        byte[] decrypted2 = symmetricalCrypt.decrypt(encrypted2, k);
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/fruitsOUT1.py"))) {
+            out.write(decrypted2);
+        } catch (FileNotFoundException e) {
+            System.out.println("Ex");
+        } catch (IOException e) {
+            System.out.println("Ex2");
+        }
+//        System.out.println(new String(decrypted));
 
     }
 }
