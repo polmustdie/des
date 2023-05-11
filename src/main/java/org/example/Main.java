@@ -5,6 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
+    public static enum modes {
+        ECB,
+        CBC,
+        CFB,
+        OFB,
+        CTR,
+        RD,
+        RDH
+    }
     // initial permuation table
      static int[] IP = { 58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36,
             28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32,
@@ -155,6 +164,12 @@ public class Main {
         RoundKeys roundKeys = new RoundKeys();
         CryptTransformation cryptTransformation = new CryptTransformation();
         SymmetricalCrypt symmetricalCrypt = new SymmetricalCrypt(roundKeys, cryptTransformation);
+//        String str = "ILOVEEEE";
+//        String k = "5qw8sd4h";
+//        byte[] encrypted = symmetricalCrypt.encrypt(str.getBytes(), k.getBytes());
+//        System.out.println(new String(encrypted));
+//        byte[] decrypted = symmetricalCrypt.decrypt(encrypted, k.getBytes());
+//        System.out.println(new String(decrypted));
         byte[] array = new byte[1];
         byte[] array2 = new byte[1];
         try {
@@ -168,8 +183,11 @@ public class Main {
         byte[] encrypted = symmetricalCrypt.encrypt(array, k);
         System.out.println(new String(encrypted));
         byte[] decrypted = symmetricalCrypt.decrypt(encrypted, k);
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUT.png"))) {
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUT.png"));
+                OutputStream out1 = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUTeNCRYPTED.txt"))
+        ) {
             out.write(decrypted);
+            out1.write(encrypted);
         } catch (FileNotFoundException e) {
             System.out.println("Ex");
         } catch (IOException e) {
@@ -187,7 +205,7 @@ public class Main {
         } catch (IOException e) {
             System.out.println("Ex2");
         }
-//        System.out.println(new String(decrypted));
+        System.out.println(new String(decrypted));
 
     }
 }

@@ -4,14 +4,12 @@ import static org.example.Main.*;
 
 public class CryptTransformation implements  ICryptTransformation{
     public byte[] encryptBloc(byte[] bloc, byte[] key) {
-        byte[] tmp = new byte[bloc.length];
-        byte[] R = new byte[bloc.length / 2];
-        byte[] L = new byte[bloc.length / 2];
+        byte[] tmp;
+        byte[] R;
+        byte[] L;
 
-        tmp = permutFunc(bloc, IP);
-
-        L = getBits(tmp, 0, IP.length/2);
-        R = getBits(tmp, IP.length/2, IP.length/2);
+        L = getBits(bloc, 0, IP.length/2);
+        R = getBits(bloc, IP.length/2, IP.length/2);
 
 
         byte[] tmpR = R;
@@ -24,7 +22,6 @@ public class CryptTransformation implements  ICryptTransformation{
 
         tmp = concatBits(R, IP.length/2, L, IP.length/2);
 
-        tmp = permutFunc(tmp, invIP);
         return tmp;
     }
 
@@ -76,5 +73,27 @@ public class CryptTransformation implements  ICryptTransformation{
             }
         }
         return out;
+    }
+    public byte[] decryptBloc(byte[] bloc, byte[] key) {
+        byte[] tmp;
+        byte[] R;
+        byte[] L;
+
+
+        L = getBits(bloc, 0, IP.length/2);
+        R = getBits(bloc, IP.length/2, IP.length/2);
+
+
+        byte[] tmpR = R;
+
+        R = func(R, key);
+
+        R = xor(L, R);
+        L = tmpR;
+
+
+        tmp = concatBits(R, IP.length/2, L, IP.length/2);
+
+        return tmp;
     }
 }
