@@ -164,30 +164,19 @@ public class Main {
         RoundKeys roundKeys = new RoundKeys();
         CryptTransformation cryptTransformation = new CryptTransformation();
         SymmetricalCrypt symmetricalCrypt = new SymmetricalCrypt(roundKeys, cryptTransformation);
-//        String str = "ILOVEEEE";
-//        String k = "5qw8sd4h";
-//        byte[] encrypted = symmetricalCrypt.encrypt(str.getBytes(), k.getBytes());
-//        System.out.println(new String(encrypted));
-//        byte[] decrypted = symmetricalCrypt.decrypt(encrypted, k.getBytes());
-//        System.out.println(new String(decrypted));
         byte[] array = new byte[1];
-        byte[] array2 = new byte[1];
         try {
             array = Files.readAllBytes(Paths.get("src/main/java/org/example/img.png"));
-            array2 = Files.readAllBytes(Paths.get("/Users/polinanesterova/Downloads/fruits.py"));
         } catch (IOException e) {
             System.out.println("File not found");
         }
-        String str = "I love cryptography";
         byte[] k = vectorGeneration();
         byte[] encrypted = symmetricalCrypt.encrypt(array, k);
-        System.out.println(new String(encrypted));
         byte[] decrypted = symmetricalCrypt.decrypt(encrypted, k);
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUT.png"));
-                OutputStream out1 = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUTeNCRYPTED.txt"))
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUT2.png"));
         ) {
             out.write(decrypted);
-            out1.write(encrypted);
+
         } catch (FileNotFoundException e) {
             System.out.println("Ex");
         } catch (IOException e) {
@@ -195,17 +184,7 @@ public class Main {
         }
 
 
-        byte[] encrypted2 = symmetricalCrypt.encrypt(array2, k);
-        System.out.println(new String(encrypted));
-        byte[] decrypted2 = symmetricalCrypt.decrypt(encrypted2, k);
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/fruitsOUT1.py"))) {
-            out.write(decrypted2);
-        } catch (FileNotFoundException e) {
-            System.out.println("Ex");
-        } catch (IOException e) {
-            System.out.println("Ex2");
-        }
-        System.out.println(new String(decrypted));
+
 
     }
 }
