@@ -1,25 +1,30 @@
 package org.example;
 
 import static org.example.Main.*;
-
 public class SymmetricalCrypt implements ISymmetricalCrypt{
+    byte[] key;
     RoundKeys roundKeys;
     CryptTransformation cryptTransformation;
     SymmetricalCrypt(RoundKeys roundKeys, CryptTransformation cryptTransformation) {
         this.cryptTransformation = cryptTransformation;
         this.roundKeys = roundKeys;
     }
+
+    void setKey(byte[] key){
+        this.key = key;
+    }
+
     @Override
-    public byte[] encrypt(byte[] data, byte[] key) {
+    public byte[] encrypt(byte[] data) {
         byte [][] K;
         int leng=0;
         byte[] padding;
         int i;
-        leng = 8 - data.length % 8;
-        padding = new byte[leng];
+//        leng = 8 - data.length % 8;
+//        padding = new byte[leng];
 
-        for (i = 0; i < leng; i++)
-            padding[i] = (byte)leng;
+//        for (i = 0; i < leng; i++)
+//            padding[i] = (byte)leng;
         // 01
         // 02 02 00000010 00000010
         // 03 03 03 000000011  000000011 000000011
@@ -46,10 +51,10 @@ public class SymmetricalCrypt implements ISymmetricalCrypt{
             }
             if (i < data.length)
                 bloc[i % 8] = data[i];
-            else{
-                bloc[i % 8] = padding[count % 8];
-                count++;
-            }
+//            else{
+//                bloc[i % 8] = padding[count % 8];
+//                count++;
+//            }
         }
         if (bloc.length == 8){
             bloc = permutFunc(bloc, IP);
@@ -66,8 +71,8 @@ public class SymmetricalCrypt implements ISymmetricalCrypt{
         return tmp2;
     }
 
-
-    public byte[] decrypt(byte[] data, byte[] key) {
+    @Override
+    public byte[] decrypt(byte[] data) {
 
 
         byte [][] K;
@@ -107,15 +112,10 @@ public class SymmetricalCrypt implements ISymmetricalCrypt{
             tmp = permutFunc(bloc, invIP);
             System.arraycopy(tmp, 0, tmp2, i - 8, bloc.length);
         }
-        tmp2 = deletePadding(tmp2);
+//        tmp2 = deletePadding(tmp2);
 
         return tmp2;
     }
 
-    private static byte[] deletePadding(byte[] input) {
-        int paddingLength = input[input.length-1];
-        byte[] tmp = new byte[input.length - paddingLength];
-        System.arraycopy(input, 0, tmp, 0, tmp.length);
-        return tmp;
-    }
+
 }

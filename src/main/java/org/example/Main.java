@@ -159,23 +159,48 @@ public class Main {
             buffer[i] = (byte)(Math.random() * 256);
         return buffer;
     }
+    private static byte[] padding(byte[] inputArray) {
+        int lengthPadding = 8 - inputArray.length % 8;
+        byte[] copyInputArrayWithPadding = new byte[inputArray.length + lengthPadding];
+        System.arraycopy(inputArray, 0, copyInputArrayWithPadding, 0, inputArray.length);
+        for (int i = 0; i < lengthPadding; i++)
+        {
+            copyInputArrayWithPadding[inputArray.length + i] = (byte)lengthPadding;
+        }
+        return copyInputArrayWithPadding;
+    }
+
+    private static byte[] deletePadding(byte[] input) {
+        int paddingLength = input[input.length-1];
+        byte[] tmp = new byte[input.length - paddingLength];
+        System.arraycopy(input, 0, tmp, 0, tmp.length);
+        return tmp;
+    }
 
     public static void main(String[] args) {
         RoundKeys roundKeys = new RoundKeys();
         CryptTransformation cryptTransformation = new CryptTransformation();
         SymmetricalCrypt symmetricalCrypt = new SymmetricalCrypt(roundKeys, cryptTransformation);
+        byte[] IV = vectorGeneration();
+        byte[] k = vectorGeneration();
+        symmetricalCrypt.setKey(k);
+        byte[] padded = new byte[1];
+        Cryption cryption = new Cryption(symmetricalCrypt, Modes.CBC, IV);
         byte[] array = new byte[1];
         try {
             array = Files.readAllBytes(Paths.get("src/main/java/org/example/img.png"));
+            padded = padding(array);
         } catch (IOException e) {
             System.out.println("File not found");
         }
-        byte[] k = vectorGeneration();
-        byte[] encrypted = symmetricalCrypt.encrypt(array, k);
-        byte[] decrypted = symmetricalCrypt.decrypt(encrypted, k);
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUT2.png"));
+        byte[] encrypted = cryption.encrypt(padded);
+        byte[] decrypted = cryption.decrypt(encrypted);
+        byte[] depadded = deletePadding(decrypted);
+//        byte[] encrypted = symmetricalCrypt.encrypt(array);
+//        byte[] decrypted = symmetricalCrypt.decrypt(encrypted);
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/java/org/example/imgOUT23.png"));
         ) {
-            out.write(decrypted);
+            out.write(depadded);
 
         } catch (FileNotFoundException e) {
             System.out.println("Ex");
